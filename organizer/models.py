@@ -13,12 +13,18 @@ User = settings.AUTH_USER_MODEL
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='teacher')
 
+    def __str__(self):
+        return "%s" % self.user.registration_number
+
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student')
     teachers = models.ManyToManyField('Teacher', related_name='students')
     courses = models.ManyToManyField('Course', related_name='students')
     photos = GenericRelation('Photo', related_query_name='photos', null=True)
+
+    def __str__(self):
+        return "%s" % self.user.registration_number
 
 
 class Course(models.Model):
@@ -55,11 +61,13 @@ def user_directory_path(instance, filename):
 
 
 class Photo(models.Model):
-    img = models.ImageField(height_field=800, width_field=800, upload_to='files/')
+    img = models.ImageField(upload_to='files/')
     identification = models.CharField(max_length=100, unique=True)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, limit_choices_to=['Course', 'Student'])
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='photos', null=True, blank=True)
+    course = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='photos', null=True, blank=True)
+
+    def __str__(self):
+        return "%s" % self.identification
 
 
 @receiver(post_save, sender=User)

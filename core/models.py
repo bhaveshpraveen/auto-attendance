@@ -8,8 +8,8 @@ from .managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    registration_number = models.CharField(_('id'), max_length=11, unique=True)
-    email = models.EmailField(_('email address'), unique=True)
+    registration_number = models.CharField(_('identification'), max_length=11, unique=True, primary_key=True)
+    email = models.EmailField(_('email address'))
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
@@ -19,6 +19,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'registration_number'
     REQUIRED_FIELDS = ['is_teacher']
+
+    def __str__(self):
+        return "{}".format(self.registration_number)
 
     class Meta:
         verbose_name = _('user')
@@ -43,3 +46,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         '''
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
+    @property
+    def is_staff(self):
+        return self.is_superuser
+
+
+# from django.contrib.auth import get_user_model
+# User = get_user_model()
+# u = User.objects.all()[0]
+# u = User.objects.create_superuser(registration_number='16BCE0904', password='12ab34cd', is_teacher=True)
