@@ -87,7 +87,4 @@ def save_user_profile(sender, instance, **kwargs):
         instance.student.save()
 
 
-
-
-
 # https://stackoverflow.com/questions/18676156/how-to-properly-use-the-choices-field-option-in-django#32657683

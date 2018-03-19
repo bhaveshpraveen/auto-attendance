@@ -3,6 +3,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
+import uuid
 
 from .managers import UserManager
 
@@ -15,6 +16,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
     is_teacher = models.BooleanField(_('is_teacher')) # if teacher True, if Student then False
+    jwt_secret = models.UUIDField(default=uuid.uuid4)
+
     objects = UserManager()
 
     USERNAME_FIELD = 'registration_number'
@@ -49,6 +52,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_staff(self):
         return self.is_superuser
+
+
+def jwt_get_secret_key(user_model):
+    return user_model.jwt_secret
 
 
 # from django.contrib.auth import get_user_model
