@@ -21,7 +21,6 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student')
     teachers = models.ManyToManyField('Teacher', related_name='students')
     courses = models.ManyToManyField('Course', related_name='students')
-    photos = GenericRelation('Photo', related_query_name='photos', null=True)
 
     def __str__(self):
         return "%s" % self.user.registration_number
@@ -43,7 +42,6 @@ class Course(models.Model):
     slot = models.CharField(max_length=20)
     room = models.CharField(max_length=4, choices=VENUE_CHOICES, default=SJT)
     teacher = models.ForeignKey(Teacher, related_name='courses', on_delete=models.CASCADE)
-    photos = GenericRelation('Photo', related_query_name='photos', null=True)
 
     def __str__(self):
         return "{} {} {}".format(self.course_name, self.slot, self.room)
@@ -65,6 +63,7 @@ class Photo(models.Model):
     identification = models.CharField(max_length=100, unique=True)
     student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='photos', null=True, blank=True)
     course = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='photos', null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return "%s" % self.identification
