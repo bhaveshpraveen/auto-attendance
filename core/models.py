@@ -15,7 +15,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
-    is_teacher = models.BooleanField(_('is_teacher')) # if teacher True, if Student then False
+    is_teacher = models.BooleanField(_('is_teacher'))  # if teacher True, if Student then False
     jwt_secret = models.UUIDField(default=uuid.uuid4)
 
     objects = UserManager()

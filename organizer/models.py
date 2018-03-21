@@ -1,6 +1,4 @@
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models.signals import post_save
@@ -40,7 +38,8 @@ class Course(models.Model):
     course_code = models.CharField(max_length=20)
     course_name = models.CharField(max_length=100)
     slot = models.CharField(max_length=20)
-    room = models.CharField(max_length=4, choices=VENUE_CHOICES, default=SJT)
+    venue = models.CharField(max_length=4, choices=VENUE_CHOICES, default=SJT)
+    room = models.CharField(max_length=3)
     teacher = models.ForeignKey(Teacher, related_name='courses', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -60,7 +59,7 @@ def user_directory_path(instance, filename):
 
 class Photo(models.Model):
     img = models.ImageField(upload_to='files/')
-    identification = models.CharField(max_length=100, unique=True)
+    identification = models.CharField(max_length=150)
     student = models.ForeignKey('Student', on_delete=models.CASCADE, related_name='photos', null=True, blank=True)
     course = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='photos', null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
