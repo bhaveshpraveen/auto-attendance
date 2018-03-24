@@ -155,3 +155,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'photos')
 MEDIA_URL = '/media/'
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
+
+
+DJOSER = {
+    'SERIALIZERS': {
+        'user': 'core.serializers.UserSerializer',
+        'user_create': 'core.serializers.UserCreateSerializer',
+    },
+}
