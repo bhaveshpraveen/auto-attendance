@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Photo, Course
+from .models import Photo, Course, Teacher, Student
 
 
 class PhotoSerializer(serializers.HyperlinkedModelSerializer):
@@ -13,7 +13,7 @@ class PhotoSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    # If you're using the standard router classes this will be a string with the format <modelname>-detail. required.
+    # If you're using the standard router classes this will be a string with the format <modelname>-detail.
     photos = serializers.HyperlinkedRelatedField(many=True, view_name='photo-detail', read_only=True)
 
     class Meta:
@@ -21,3 +21,19 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = ('course_code', 'course_name', 'slot', 'room', 'teacher', 'photos')
 
 
+class TeacherSerializer(serializers.ModelSerializer):
+    courses = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    students = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Teacher
+        fields = ('user', 'courses')
+
+
+class StudentSerializer(serializers.ModelSerializer):
+    courses = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    photos = serializers.HyperlinkedRelatedField(many=True, view_name='photo-detail', read_only=True)
+
+    class Meta:
+        model = Student
+        fields = ('user', 'courses', 'photos')
