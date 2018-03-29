@@ -26,9 +26,9 @@ class NoPermission(permissions.BasePermission):
         return False
 
 
-class IsAuthenticated(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_authenticated()
+# class IsAuthenticated(permissions.BasePermission):
+#     def has_permission(self, request, view):
+#         return request.user.is_authenticated()
 
 
 class IsPost(permissions.BasePermission):

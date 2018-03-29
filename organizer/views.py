@@ -40,7 +40,7 @@ class PhotoUploadViewSet(ModelViewSet):
         Or(
             And(
                 Or(custom_permissions.IsGet, custom_permissions.IsHead, custom_permissions.IsOptions, custom_permissions.IsPost,),
-                custom_permissions.IsAuthenticated,
+                permissions.IsAuthenticated
             ),
             And(
                 Or(custom_permissions.IsDelete, custom_permissions.IsPatch, custom_permissions.IsPut),
@@ -79,7 +79,7 @@ class PermissionTeacherStudentMixin:
         Or(
             And(
                 Or(custom_permissions.IsGet, custom_permissions.IsHead, custom_permissions.IsOptions),
-                custom_permissions.IsAuthenticated
+                permissions.IsAuthenticated
             ),
             And(
                 # If the method is post, permission will always be denied. Since Teacher Model extends from User model
