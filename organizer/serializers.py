@@ -9,21 +9,30 @@ class PhotoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Photo
         fields = '__all__'
-        read_only_fields = ('course', 'student', 'created', 'identification', 'img')
+        read_only_fields = ('id', 'course', 'student', 'created', 'identification', 'img')
 
 
 class CourseSerializer(serializers.ModelSerializer):
     # If you're using the standard router classes this will be a string with the format <modelname>-detail.
     photos = serializers.HyperlinkedRelatedField(many=True, view_name='photo-detail', read_only=True)
+    students = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Course
-        fields = ('course_code', 'course_name', 'slot', 'room', 'teacher', 'photos')
+        fields = ('course_code', 'course_name', 'slot', 'room', 'venue', 'photos', 'teacher', 'students')
+
+
+class CourseListSerializer(serializers.ModelSerializer):
+    teacher = serializers.SlugRelatedField(read_only=True, slug_field='id')
+
+    class Meta:
+        model = Course
+        fields = ('course_code', 'course_name', 'slot', 'venue', 'room', 'teacher')
 
 
 class TeacherSerializer(serializers.ModelSerializer):
     courses = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    students = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # students = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Teacher
@@ -37,3 +46,6 @@ class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ('user', 'courses', 'photos')
+
+
+#TODO: Enroll Students to Courses
