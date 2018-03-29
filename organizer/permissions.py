@@ -26,6 +26,16 @@ class NoPermission(permissions.BasePermission):
         return False
 
 
+def IsFields(*fields):
+    class IsFieldsPermission(permissions.BasePermission):
+        _fields = set(fields)
+
+        def has_permission(self, request, view):
+            return set(request.data.keys()) <= self._fields
+
+        def has_object_permission(self, request, view, obj):
+            return set(request.data.keys()) <= self._fields
+
 # class IsAuthenticated(permissions.BasePermission):
 #     def has_permission(self, request, view):
 #         return request.user.is_authenticated()
@@ -79,3 +89,8 @@ class IsPhotoOwner(permissions.BasePermission):
             return obj.course.teacher == user.teacher
         else:
             return obj.student == user.student
+
+
+class IsCourseTeacher(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.teacher == request.user.teacher
