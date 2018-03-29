@@ -7,6 +7,7 @@ from rest_framework import (
 )
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from rest_condition import And, Or, Not
@@ -48,6 +49,13 @@ class PhotoUploadViewSet(ModelViewSet):
             ),
         )
     ]
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = super().get_queryset()
+        if user.is_teacher:
+            return qs.filter(course__teacher=user.teacher)
+        return qs.filter(student=user.student)
 
     def perform_create(self, serializer):
         print('User is in perform_create=', self.request.user)
