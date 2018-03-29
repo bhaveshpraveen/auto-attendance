@@ -5,6 +5,7 @@ from rest_framework import (
     permissions,
     generics
 )
+from rest_framework.decorators import list_route
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
@@ -20,8 +21,7 @@ from .models import (
 from .serializers import (PhotoSerializer,
                           TeacherSerializer,
                           StudentSerializer,
-                          CourseSerializer,
-                          CourseListSerializer)
+                          CourseSerializer,)
 from .utils import generate_random_string, get_current_date, get_unique_identificaton
 from . import permissions as custom_permissions
 
@@ -125,20 +125,56 @@ class PermissionTeacherStudentMixin:
 #     permissions = (permissions.IsAuthenticated,)
 
 
-#TODO: Permissions
+# TODO: Permissions
 class CourseViewSet(ModelViewSet):
     model = Course
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    permission_classes = [
+        Or(
+            # Student should be able to modify any other field
+            And(custom_permissions.IsStudent, custom_permissions.IsPut, custom_permissions.IsFields()),
+            And(custom_permissions.IsTeacher, custom_permissions.IsPost),
+            And(custom_permissions.IsTeacher, custom_permissions, custom_permissions.IsPut, custom_permissions.IsPatch, custom_permissions.IsCourseTeacher)
+        )
+    ]
 
     def get_object(self):
         user = self.request.user
-        obj = self.model.objects.get(user=user)
+        obj = self.model.objects.get(teacher=user.teacher)
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(teacher=user.teacher)
 
-#TODO: Permissions
+    def get_queryset(self):
+        user = self.request.user
+        qs = super().get_queryset()
+        if user.is_teacher:
+            return user.courses.all()
+        return qs.filter(teacher=user.teacher)
+
+    @list_route(methods=['get'], url_path='all')
+    def all_courses(self, request):
+        queryset = self.queryset
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        user = self.request.user
+        course = serializer.save()
+        if not user.is_teacher:
+            course.students.add(user.student)
+
+
+# TODO: StudentList
 class StudentViewSet(ModelViewSet, GetObjectTeacherStudentMixin, PermissionTeacherStudentMixin):
     model = Student
     queryset = Student.objects.all()
