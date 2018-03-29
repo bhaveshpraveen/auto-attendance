@@ -7,3 +7,4 @@ Pillow==5.0.0
 psycopg2==2.7.4
 PyJWT==1.6.1
 pytz==2018.3
+rest-condition==1.0.3
