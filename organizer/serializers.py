@@ -15,6 +15,7 @@ class PhotoSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
+    teacher = serializers.StringRelatedField()
     # If you're using the standard router classes this will be a string with the format <modelname>-detail.
     photos = serializers.HyperlinkedRelatedField(many=True, view_name='photo-detail', read_only=True)
     # students = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
