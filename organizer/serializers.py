@@ -11,7 +11,7 @@ class PhotoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Photo
         fields = ('id', 'course', 'student', 'identification', 'img')
-        read_only_fields = ('id', 'course', 'student', 'timestamp', )
+        read_only_fields = ('id', 'img', 'identification', 'course', 'student', 'timestamp', )
 
 
 class CourseSerializer(serializers.ModelSerializer):

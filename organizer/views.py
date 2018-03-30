@@ -67,7 +67,7 @@ class PhotoUploadViewSet(ModelViewSet):
 
         user = self.request.user
         # print('In PhotoUploadViewSet. serializer=', serializer)
-        _id = self.request.data.get('id', None)
+        _id = self.request.data.get('id')
         # identification = get_unique_identificaton(serializer)
 
         if user.is_teacher:
