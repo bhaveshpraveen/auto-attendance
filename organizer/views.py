@@ -62,12 +62,12 @@ class PhotoUploadViewSet(ModelViewSet):
 
         user = self.request.user
         # print('In PhotoUploadViewSet. serializer=', serializer)
-        slot = self.request.data.get('slot', None)
+        _id = self.request.data.get('id', None)
         # identification = get_unique_identificaton(serializer)
 
         if user.is_teacher:
             teacher = user.teacher
-            course = get_object_or_404(self.course_queryset, teacher=teacher, slot=slot)
+            course = get_object_or_404(self.course_queryset, teacher=teacher, id=_id)
             serializer.save(course=course, img=self.request.data.get('img'))
         else:
             print('Student', user.student)
@@ -179,6 +179,11 @@ class StudentViewSet(ModelViewSet, GetObjectTeacherStudentMixin, PermissionTeach
     model = Student
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = super().get_queryset()
+        return queryset.filter(course__id=self.request.data.get('course_id'))
 
 
 class TeacherViewSet(ModelViewSet, GetObjectTeacherStudentMixin, PermissionTeacherStudentMixin):
