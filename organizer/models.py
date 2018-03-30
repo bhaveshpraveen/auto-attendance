@@ -12,7 +12,7 @@ class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='teacher')
 
     def __str__(self):
-        return "%s" % self.user.registration_number
+        return "{}-{} {}".format(self.user.registration_number, self.user.first_name, self.user.last_name)
 
 
 class Student(models.Model):
