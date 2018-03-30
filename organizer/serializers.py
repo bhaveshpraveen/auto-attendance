@@ -22,7 +22,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ('course_code', 'course_name', 'slot', 'room', 'venue', 'photos', 'teacher')
+        fields = ('id', 'course_code', 'course_name', 'slot', 'room', 'venue', 'photos', 'teacher')
 
 
 class TeacherSerializer(serializers.ModelSerializer):
@@ -34,7 +34,6 @@ class TeacherSerializer(serializers.ModelSerializer):
         fields = ('user', 'courses')
 
 
-#TODO Teacher can view the list of students under a particular course
 class StudentSerializer(serializers.ModelSerializer):
     # Here, changing the user serializer from the default one because when rendering the students list,
     # is rather tedious if you were send a request for every user
@@ -47,4 +46,10 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = ('user', 'courses', 'photos')
 
 
-#TODO: Enroll Students to Courses
+class StudentListSerializer(serializers.ModelSerializer):
+    user = UserRegNoSerializer()
+
+    class Meta:
+        model = Student
+        fields = ('user', )
+
