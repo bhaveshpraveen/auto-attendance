@@ -35,6 +35,7 @@ def IsFields(*fields):
 
         def has_object_permission(self, request, view, obj):
             return set(request.data.keys()) <= self._fields
+    return IsFieldsPermission
 
 # class IsAuthenticated(permissions.BasePermission):
 #     def has_permission(self, request, view):
