@@ -5,7 +5,7 @@ from rest_framework import (
     permissions,
     generics
 )
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.generics import get_object_or_404
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
@@ -21,12 +21,12 @@ from .models import (
 from .serializers import (PhotoSerializer,
                           TeacherSerializer,
                           StudentSerializer,
+                          StudentListSerializer,
                           CourseSerializer,)
-from .utils import generate_random_string, get_current_date, get_unique_identificaton
+
 from . import permissions as custom_permissions
 
 
-#TODO: Modify Permission Classes
 class PhotoUploadViewSet(ModelViewSet):
     # curl --verbose --header "Authorization:
     # jwt eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTViY2UwOTA0IiwidXNlcm5hbWUiOiIxNWJjZTA5MDQiLCJleHAiOjE1MjE2NTYzMTEsImVtYWlsIjoiIiwicmVnaXN0cmF0aW9uX251bWJlciI6IjE1YmNlMDkwNCJ9.tVh7p2d-FGlHu-Foh-6ox7BSHo7MNvI15FZbayn7rhE"
@@ -40,11 +40,16 @@ class PhotoUploadViewSet(ModelViewSet):
     permission_classes = [
         Or(
             And(
-                Or(custom_permissions.IsGet, custom_permissions.IsHead, custom_permissions.IsOptions, custom_permissions.IsPost,),
+                Or(custom_permissions.IsGet,
+                   custom_permissions.IsHead,
+                   custom_permissions.IsOptions,
+                   custom_permissions.IsPost),
                 permissions.IsAuthenticated
             ),
             And(
-                Or(custom_permissions.IsDelete, custom_permissions.IsPatch, custom_permissions.IsPut),
+                Or(custom_permissions.IsDelete,
+                   custom_permissions.IsPatch,
+                   custom_permissions.IsPut),
                 custom_permissions.IsPhotoOwner,
             ),
         )
@@ -102,48 +107,24 @@ class PermissionTeacherStudentMixin:
     ]
 
 
-# #TODO: Permissions
-# class TeacherDetailView(GetObjectMixin):
-#     """Return the courses taken by the teacher"""
-#     model = Teacher
-#     serializer_class = TeacherSerializer
-#     permissions = (permissions.IsAuthenticated, )
-
-
-# #TODO: Permissions
-# class StudentDetailView(GetObjectMixin):
-#     """Return the courses taken by student and the link to his pictures"""
-#     model = Student
-#     serializer_class = StudentSerializer
-#     permissions = (permissions.IsAuthenticated,)
-
-
-# #TODO: Permissions
-# class CourseListView(generics.ListAPIView):
-#     queryset = Course.objects.all()
-#     serializer_class = CourseListSerializer
-#     permissions = (permissions.IsAuthenticated,)
-
-
-# TODO: Permissions
 class CourseViewSet(ModelViewSet):
     model = Course
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    student_serializer = StudentListSerializer
     permission_classes = [
         Or(
-            # Student should be able to modify any other field
-            And(custom_permissions.IsStudent, custom_permissions.IsPut, custom_permissions.IsFields()),
-            And(custom_permissions.IsTeacher, custom_permissions.IsPost),
-            And(custom_permissions.IsTeacher, custom_permissions, custom_permissions.IsPut, custom_permissions.IsPatch, custom_permissions.IsCourseTeacher)
+            And(
+                Or(custom_permissions.IsGet, custom_permissions.IsHead, custom_permissions.IsOptions),
+                permissions.IsAuthenticated
+            ),
+            # Student should not be able to modify any other field
+            And(custom_permissions.IsPatch, custom_permissions.IsStudent, custom_permissions.IsFields()),
+            And(custom_permissions.IsPost, custom_permissions.IsTeacher),
+            # teacher can modify his course
+            And(custom_permissions.IsTeacher, custom_permissions, custom_permissions.IsPut, custom_permissions.IsPatch, custom_permissions.IsCourseTeacher),
         )
     ]
-
-    def get_object(self):
-        user = self.request.user
-        obj = self.model.objects.get(teacher=user.teacher)
-        self.check_object_permissions(self.request, obj)
-        return obj
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -152,9 +133,14 @@ class CourseViewSet(ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         qs = super().get_queryset()
+        if (not user.is_teacher) and self.request.method == "PATCH":
+            # If method is PATCH, return the queryset as is, in order to enroll
+            return qs
         if user.is_teacher:
-            return user.courses.all()
-        return qs.filter(teacher=user.teacher)
+            # if user is requesting, then send only the objects he can modify
+            return user.teacher.courses.all()
+        # Send only the courses student has enrolled
+        return user.student.courses.all()
 
     @list_route(methods=['get'], url_path='all')
     def all_courses(self, request):
@@ -171,19 +157,22 @@ class CourseViewSet(ModelViewSet):
         user = self.request.user
         course = serializer.save()
         if not user.is_teacher:
+            # Enrolling the student to the course
             course.students.add(user.student)
 
+    @detail_route(methods=['get'], url_path='students')
+    def enrolled_students(self, request, pk=None):
+        """Returns a list of students enrolled in a course"""
+        obj = self.get_object()
+        students = obj.students.all()
+        serializer = self.student_serializer(students, many=True)
+        return Response(serializer.data)
 
-# TODO: StudentList
+
 class StudentViewSet(ModelViewSet, GetObjectTeacherStudentMixin, PermissionTeacherStudentMixin):
     model = Student
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        queryset = super().get_queryset()
-        return queryset.filter(course__id=self.request.data.get('course_id'))
 
 
 class TeacherViewSet(ModelViewSet, GetObjectTeacherStudentMixin, PermissionTeacherStudentMixin):
