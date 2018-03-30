@@ -29,5 +29,5 @@ class UserCreateSerializer(djoser_serializers.UserCreateSerializer):
 class UserRegNoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'registration_number', 'first_name', 'last_name')
+        fields = ('registration_number', 'first_name', 'last_name')
 
