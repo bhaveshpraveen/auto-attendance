@@ -3,6 +3,7 @@ amqp==2.2.2
 appnope==0.1.0
 astor==0.6.2
 billiard==3.5.0.3
+bison==0.0.5
 bleach==1.5.0
 celery==4.1.0
 certifi==2018.1.18
@@ -43,6 +44,7 @@ pymongo==3.6.1
 pyparsing==2.2.0
 python-dateutil==2.7.2
 pytz==2018.3
+PyYAML==3.12
 redis==2.10.6
 requests==2.18.4
 rest-condition==1.0.3
