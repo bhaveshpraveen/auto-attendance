@@ -15,32 +15,6 @@ from organizer.models import Photo
 from Tiny_Faces_in_Tensorflow import tiny_face_eval
 
 
-def return_values(file_name):
-    """Return a list containing two values.
-    First value is the first line in the file specified
-    Second calue is the second line in the given file
-    """
-    with open(file_name) as f:
-        lines = f.readlines()
-        # remove carriage return characters
-        lines = [line.strip() for line in lines]
-        return lines
-
-
-ENROLL_URL = 'https://api.kairos.com/enroll'
-RECOGNIZE_URL = 'https://api.kairos.com/recognize'
-
-app_id, app_key = return_values('kairos_cred.txt')
-
-HEADERS = {
-    'app_id': app_id,
-    'app_key': app_key
-}
-
-user_name, password = return_values('mlab_cred.txt')
-
-URI = 'mongodb://%s:%s@ds119268.mlab.com:19268/attendance' %(user_name, password)
-
 
 
 def get_object_photo_model(pk):
@@ -74,7 +48,7 @@ def add_to_gallery(img_path, regno):
         "subject_id": regno,
         "gallery_name": "test"
     }
-    res = post(ENROLL_URL, data=payload, files=files, headers=HEADERS)
+    res = post(settings.ENROLL_URL, data=payload, files=files, headers=HEADERS)
     return res.content
 
 
@@ -144,7 +118,7 @@ def face_recognition(img_path, regno):
     payload = {
         "gallery_name": "test"
     }
-    res = post(RECOGNIZE_URL, data=payload, files=files, headers=HEADERS)
+    res = post(settings.RECOGNIZE_URL, data=payload, files=files, headers=settings.HEADERS)
     return res.content
 
 
@@ -160,7 +134,7 @@ def highest_confidence_match(dic):
 
 
 def upload_to_mlab(record):
-    client = MongoClient(URI)
+    client = MongoClient(settings.URI)
     db = client['attendance']
     collection = db['attendance']
     c = collection.insert_one(record)
