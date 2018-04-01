@@ -25,6 +25,7 @@ from .serializers import (PhotoSerializer,
                           CourseSerializer,)
 
 from . import permissions as custom_permissions
+from face_detect.tasks import process_photo
 
 
 class PhotoUploadViewSet(ModelViewSet):
@@ -73,11 +74,14 @@ class PhotoUploadViewSet(ModelViewSet):
         if user.is_teacher:
             teacher = user.teacher
             course = get_object_or_404(self.course_queryset, teacher=teacher, id=_id)
-            serializer.save(course=course, img=self.request.data.get('img'))
+            obj = serializer.save(course=course, img=self.request.data.get('img'))
         else:
             print('Student', user.student)
 
-            serializer.save(student=user.student, img=self.request.data.get('img'))
+            obj = serializer.save(student=user.student, img=self.request.data.get('img'))
+
+        # process_photo.delay(obj.id)
+        process_photo(obj.id)
 
 
 class GetObjectTeacherStudentMixin:
@@ -182,7 +186,8 @@ class TeacherViewSet(ModelViewSet, GetObjectTeacherStudentMixin, PermissionTeach
 
 
 
-
+# to find the location of the file
+# https://stackoverflow.com/questions/48146443/resize-crop-an-image-using-celery-in-django-in-django-admin-and-outside
 
 
 
