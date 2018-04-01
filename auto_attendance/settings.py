@@ -66,7 +66,7 @@ REST_FRAMEWORK = {
 }
 
 JWT_AUTH = {
-    # 'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=30),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=30),
     'JWT_GET_USER_SECRET_KEY': 'core.models.jwt_get_secret_key',
 }
 
@@ -163,3 +163,11 @@ DJOSER = {
         'user_create': 'core.serializers.UserCreateSerializer',
     },
 }
+
+
+# REDIS related settings
+REDIS_HOST = 'localhost'
+REDIS_PORT = '6379'
+BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'

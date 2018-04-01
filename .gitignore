@@ -6,3 +6,13 @@ db.sqlite3
 /**/.DS_Store
 /**/migrations/*
 photos/*
+Tiny_Faces_in_Tensorflow/detected_faces
+Tiny_Faces_in_Tensorflow/networks/*
+Tiny_Faces_in_Tensorflow/detected_faces/*
+Tiny_Faces_in_Tensorflow/images/*
+Tiny_Faces_in_Tensorflow/*.mat*
+Tiny_Faces_in_Tensorflow/*.pickle*
+Tiny_Faces_in_Tensorflow/*.pickle
+Tiny_Faces_in_Tensorflow/*.mat
+Tiny_Faces_in_Tensorflow/.ipynb_checkpoints/*
+/**/*.swp
