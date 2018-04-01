@@ -1,8 +1,8 @@
-from http.client import HTTPResponse
 from bson.json_util import dumps
 from pymongo import MongoClient
 
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
 from django.conf import settings
 
 from rest_framework import (
@@ -162,11 +162,11 @@ class CourseViewSet(ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @list_route(methods=['get'], url_path='attendance')
-    def fetch_attendance(self, request):
+    @detail_route(methods=['get'], url_path='attendance')
+    def fetch_attendance(self, request, pk=None):
         obj = self.get_object()
         course_code = obj.course_code
-        slot = obj.slot()
+        slot = obj.slot
         teacher = obj.teacher.user.registration_number
 
         client = MongoClient(settings.URI)
@@ -178,7 +178,7 @@ class CourseViewSet(ModelViewSet):
             'course_code': course_code
         }))
 
-        return HTTPResponse(data)
+        return HttpResponse(data)
 
     def perform_update(self, serializer):
         user = self.request.user
