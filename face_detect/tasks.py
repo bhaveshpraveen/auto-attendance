@@ -183,7 +183,7 @@ def handle_teacher_upload(obj):
     tiny_face_eval.evaluate(img=img_path, output_dir=location)
 
     record = {
-        'teacher': 'regno',
+        'teacher': regno,
         'slot': course.slot,
         'course_code': course.course_code,
         'date': obj.timestamp,
@@ -212,7 +212,7 @@ def handle_teacher_upload(obj):
 
 
 
-# @shared_task
+@shared_task
 def process_photo(pk):
     obj = Photo.objects.get(id=pk)
     if obj.student:
