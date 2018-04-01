@@ -1,4 +1,9 @@
+from http.client import HTTPResponse
+from bson.json_util import dumps
+from pymongo import MongoClient
+
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 
 from rest_framework import (
     status,
@@ -80,8 +85,8 @@ class PhotoUploadViewSet(ModelViewSet):
 
             obj = serializer.save(student=user.student, img=self.request.data.get('img'))
 
-        # process_photo.delay(obj.id)
-        process_photo(obj.id)
+        process_photo.delay(obj.id)
+        # process_photo(obj.id)
 
 
 class GetObjectTeacherStudentMixin:
@@ -156,6 +161,24 @@ class CourseViewSet(ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @list_route(methods=['get'], url_path='attendance')
+    def fetch_attendance(self, request):
+        obj = self.get_object()
+        course_code = obj.course_code
+        slot = obj.slot()
+        teacher = obj.teacher.user.registration_number
+
+        client = MongoClient(settings.URI)
+        db = client['attendance']
+        collection = db['attendance']
+        data = dumps(collection.find({
+            'teacher': teacher,
+            'slot': slot,
+            'course_code': course_code
+        }))
+
+        return HTTPResponse(data)
 
     def perform_update(self, serializer):
         user = self.request.user
