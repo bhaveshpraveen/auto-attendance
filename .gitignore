@@ -16,3 +16,6 @@ Tiny_Faces_in_Tensorflow/*.pickle
 Tiny_Faces_in_Tensorflow/*.mat
 Tiny_Faces_in_Tensorflow/.ipynb_checkpoints/*
 /**/*.swp
+images_dir/*kairos_cred.txt
+mlab_cred.txt
+/**/.jpg
