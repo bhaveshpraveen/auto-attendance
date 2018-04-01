@@ -173,3 +173,30 @@ BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 
 TIME_ZONE =  'Asia/Kolkata'
+
+
+def return_values(file_name):
+    """Return a list containing two values.
+    First value is the first line in the file specified
+    Second calue is the second line in the given file
+    """
+    with open(file_name) as f:
+        lines = f.readlines()
+        # remove carriage return characters
+        lines = [line.strip() for line in lines]
+        return lines
+
+
+ENROLL_URL = 'https://api.kairos.com/enroll'
+RECOGNIZE_URL = 'https://api.kairos.com/recognize'
+
+app_id, app_key = return_values('kairos_cred.txt')
+
+HEADERS = {
+    'app_id': app_id,
+    'app_key': app_key
+}
+
+user_name, password = return_values('mlab_cred.txt')
+
+URI = 'mongodb://%s:%s@ds119268.mlab.com:19268/attendance' %(user_name, password)
