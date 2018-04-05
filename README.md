@@ -26,7 +26,7 @@ Not exactly. I've got a secret weapon up my sleeve.
 
 **...Drumrolls….**
 
-![alt text](https://github.com/bhaveshpraveen/auto-attendance/tree/master/readme_assets/god.jpg "My Idol")
+ ![alt text](https://github.com/bhaveshpraveen/auto-attendance/tree/master/readme_assets/god.jpg "My Idol")
 
 And I've also used [Celery](http://www.celeryproject.org/). But mostly thanks to Chuck. He thought me to live with my pretty **coughs coughs** face. And I'd like to thank every one who made this moment possible, my dad, my mom, my neighbour's daughter, my …………No ? Okay.
 
