@@ -25,7 +25,7 @@ SECRET_KEY = '%v+020--4i14p44d3!!ii86q95y%3%nc@ggy&9%295igc!%e)y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'core.User'
 

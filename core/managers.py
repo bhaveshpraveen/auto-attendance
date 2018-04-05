@@ -10,6 +10,7 @@ class UserManager(BaseUserManager):
         """
         if not registration_number:
             raise ValueError('The given registration number must be set')
+        print(extra_fields)
         user = self.model(registration_number=registration_number, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)

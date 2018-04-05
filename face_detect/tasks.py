@@ -48,7 +48,7 @@ def add_to_gallery(img_path, regno):
         "subject_id": regno,
         "gallery_name": "test"
     }
-    res = post(settings.ENROLL_URL, data=payload, files=files, headers=HEADERS)
+    res = post(settings.ENROLL_URL, data=payload, files=files, headers=settings.HEADERS)
     return res.content
 
 
@@ -106,6 +106,7 @@ def handle_student_upload(obj):
         face_id = get_face_id_from_api(dict_resp)
         obj.identification = face_id
         obj.save()
+
     delete_files_in_dir(location)
     os.removedirs(location)
 
