@@ -82,13 +82,8 @@ celery -A auto_attendance worker -l DEBUG
 ### Credits
 
 - The API's are heavily influenced by this [talk](https://www.youtube.com/watch?v=2LWheXmsmHg&t=1036s)
-- [Django Rest Framework](http://www.django-rest-framework.org/)
-- [Djoser](https://djoser.readthedocs.io/)
-- [Anaconda](https://anaconda.org/)
-- [Django](http://djangoproject.com/)
-- And all other packages
 - The friendly **coughs** community over at StackoverFlow.
--  And also this [Dickhead](https://github.com/MINOSai/). He made the android application.
+- And also this [guy](https://github.com/MINOSai/). He made the android application. He's pretty cool though. Don't forget to checkout his profile
 
 
 
