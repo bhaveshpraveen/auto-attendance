@@ -13,7 +13,7 @@ cycler==0.10.0
 decorator==4.2.1
 Django==2.0.3
 django-templated-mail==1.1.1
-djangorestframework==3.7.7
+djangorestframework==3.9.1
 djangorestframework-jwt==1.11.0
 djoser==1.1.5
 gast==0.2.0
