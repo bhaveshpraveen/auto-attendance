@@ -29,7 +29,7 @@ Markdown==2.6.11
 matplotlib==2.2.2
 mkl-fft==1.0.0
 mkl-random==1.0.1
-numpy==1.14.2
+numpy==1.22.0
 parso==0.1.1
 pexpect==4.4.0
 pickleshare==0.7.4
